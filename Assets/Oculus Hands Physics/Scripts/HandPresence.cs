@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Unity.XR.Oculus;
 using UnityEngine;
 using UnityEngine.XR;
 
@@ -44,6 +45,7 @@ public class HandPresence : MonoBehaviour
         {
             handAnimator.SetFloat("Grip", 0);
         }
+
     }
 
     // Update is called once per frame
