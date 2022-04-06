@@ -34,13 +34,14 @@ public class Slot : MonoBehaviour
     private void OnTriggerStay(Collider other)
     {
         Debug.Log("Slot / Trigger Stay");
-        if (ItemInSlot != null) return;
-        Debug.Log("Slot / Slot is not empty.");
         GameObject obj = other.gameObject;
         if (!IsItem(obj)) return;
-        Debug.Log("Slot / It have item.");
+        Debug.Log("Slot / It is item.");
+        if (ItemInSlot != null) return;
+        Debug.Log("Slot / Slot is not empty.");
+        
         targetDevice.TryGetFeatureValue(CommonUsages.grip, out float gripValue);
-        if (gripValue >= 0)
+        if (gripValue > 0)
         {
             Debug.Log("Slot / You gripped something");
             InsertItem(obj);

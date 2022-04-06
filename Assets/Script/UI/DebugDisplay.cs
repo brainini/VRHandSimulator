@@ -9,6 +9,7 @@ public class DebugDisplay : InventoryVR
     Dictionary<string, string> debugLogs = new Dictionary<string, string>();
     public GameObject Console;
     public Text display;
+    public ScrollRect m_bottomScrollRect;
     bool ConsoleActive;
     private void Start()
     {
@@ -19,10 +20,17 @@ public class DebugDisplay : InventoryVR
     private void OnEnable()
     {
         Application.logMessageReceived += HandleLog;
+        StartCoroutine(PushToBottom());
     }
     private void OnDisable()
     {
         Application.logMessageReceived -= HandleLog;
+    }
+    IEnumerator PushToBottom()
+    {
+        yield return new WaitForEndOfFrame();
+        m_bottomScrollRect.verticalNormalizedPosition = 0;
+        LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)m_bottomScrollRect.transform);
     }
 
     private IEnumerator TurnConsole()

@@ -3,20 +3,24 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.XR;
+using UnityEngine.XR.Interaction.Toolkit;
 
 public class InventoryVR : MonoBehaviour
 {
     public InputDeviceCharacteristics controllerCharacteristics;
-    protected InputDevice targetDevice;
-
-    public GameObject Inventory;
-    public GameObject Anchor;
+    public InputDevice targetDevice;
+    [SerializeField]
+    private GameObject Inventory;
+    [SerializeField]
+    private GameObject Anchor;
     bool UIActive;
+    bool buttonstate = false;
 
     private void Start()
     {
         Inventory.SetActive(false);
         UIActive = false;
+        buttonstate = false;
         TryInitialize();
     }
 
@@ -37,19 +41,7 @@ public class InventoryVR : MonoBehaviour
         Inventory.SetActive(UIActive);
     }
 
-    public void GrabInventory()
-    {
-        if (gameObject.GetComponent<Item>() == null) return;
-        if (gameObject.GetComponent<Item>().inSlot)
-        {
-            gameObject.GetComponentInParent<Slot>().ItemInSlot = null;
-            gameObject.transform.parent = null;
-            gameObject.GetComponent<Item>().inSlot = false;
-            gameObject.GetComponent<Item>().currentSlot.ResetColor();
-            gameObject.GetComponent<Item>().currentSlot = null;
-        }
-    }
-    IEnumerator UpdateHandAnimation()
+    void InventoryCheck()
     {
         targetDevice.TryGetFeatureValue(CommonUsages.primaryButton, out bool primarySelect);
         if (primarySelect)
@@ -57,8 +49,9 @@ public class InventoryVR : MonoBehaviour
             Debug.Log("primaryButton Selected");
             TurnInventory();
         }
-        yield return new WaitForSeconds(2f);
+        
     }
+
     private void Update()
     {
         if (UIActive)
@@ -73,7 +66,15 @@ public class InventoryVR : MonoBehaviour
         }
         else
         {
-            StartCoroutine(UpdateHandAnimation());
+            targetDevice.TryGetFeatureValue(CommonUsages.primaryButton, out bool buttonValue);
+            {
+                if (buttonValue != buttonstate)
+                {
+                    InventoryCheck();
+                    //do stuff
+                    buttonstate = buttonValue;
+                }
+            }
         }
     }
 }
