@@ -7,7 +7,7 @@ using UnityEngine.XR;
 public class InventoryVR : MonoBehaviour
 {
     public InputDeviceCharacteristics controllerCharacteristics;
-    private InputDevice targetDevice;
+    protected InputDevice targetDevice;
 
     public GameObject Inventory;
     public GameObject Anchor;
@@ -31,7 +31,7 @@ public class InventoryVR : MonoBehaviour
         }
     }
 
-    public void TurnInventory()
+    private void TurnInventory()
     {
         UIActive = !UIActive;
         Inventory.SetActive(UIActive);
@@ -49,7 +49,7 @@ public class InventoryVR : MonoBehaviour
             gameObject.GetComponent<Item>().currentSlot = null;
         }
     }
-    void UpdateHandAnimation()
+    IEnumerator UpdateHandAnimation()
     {
         targetDevice.TryGetFeatureValue(CommonUsages.primaryButton, out bool primarySelect);
         if (primarySelect)
@@ -57,6 +57,7 @@ public class InventoryVR : MonoBehaviour
             Debug.Log("primaryButton Selected");
             TurnInventory();
         }
+        yield return new WaitForSeconds(2f);
     }
     private void Update()
     {
@@ -72,7 +73,7 @@ public class InventoryVR : MonoBehaviour
         }
         else
         {
-            UpdateHandAnimation();
+            StartCoroutine(UpdateHandAnimation());
         }
     }
 }
